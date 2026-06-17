@@ -38,15 +38,19 @@ h2, h3 {
 
 .slots {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin: 30px 0;
+    justify-content: center; 
+    align-items: flex-start; 
+    gap: 24px;               
+    margin: 30px auto;       /* Centers the layout container dynamically */
+    flex-wrap: wrap;         /* FIX: Allows boxes to drop to a new line safely if zoomed in */
+    max-width: 100%;         /* Prevents breaking past the container walls */
 }
 
 .slot-container {
     flex: 1;
     min-width: 0;
+    max-width: 150px; /* UPDATED: Prevents text container from overstretching */
+    width: 150px;     /* UPDATED: Forces headers to match the 150px boundary */
 }
 
 .slot-container h3 {
@@ -63,7 +67,11 @@ h2, h3 {
     background: #2a2a2a;
     border: 3px solid #B9BCAE;
     border-radius: 16px; /* Material You: Large Component Token */
+    
+    /* UPDATED: Wider rectangular dimensions */
+    width: 150px;
     height: 110px;
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,10 +82,12 @@ h2, h3 {
                 filter 0.1s linear;
 }
 
-/* Blur effect applied during spin execution */
+/* FIX: Blurs only the text number while keeping the box border crisp */
 .slot.spinning {
-    filter: blur(2px);
-    opacity: 0.8;
+    color: transparent;
+    text-shadow: 0 0 9px rgba(185, 188, 174, 0.8);
+    opacity: 0.5;
+    transform: scale(0.95); /* Optional subtle dynamic snap effect during spinning */
 }
 
 .v-divider {
@@ -86,6 +96,13 @@ h2, h3 {
     background-color: #333333;
     margin-top: 35px;
     flex-shrink: 0;
+}
+
+/* FIX: If the viewport is crowded or heavily zoomed, hide the vertical line */
+@media (max-width: 720px) {
+    .v-divider {
+        display: none; 
+    }
 }
 
 .slot.clickable {
@@ -106,15 +123,17 @@ button#spinButton {
     background-color: #B9BCAE;
     color: #121212;
     border: none;
-    padding: 40px 40px;
+    padding: 40px 40px; /* Locked desktop padding */
     font-size: 20px;
     font-weight: bold;
     border-radius: 100px; /* Material You: Full Pill Token */
     cursor: pointer;
     transition: opacity 0.3s;
     font-family: 'Courier Prime', monospace;
-    width: 100%;
-    max-width: 280px;
+    
+    /* FIX: Completely frozen dimensions across all screens */
+    width: 280px; 
+    height: 106px; /* Explicit height to preserve the desktop aspect ratio */
     margin-bottom: 30px;
 }
 
@@ -187,7 +206,7 @@ button#spinButton:disabled {
 
 .all-links-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(4, 1fr); /* Forces exactly 4 even columns on desktop */
     gap: 20px;
 }
 
@@ -218,22 +237,71 @@ button#spinButton:disabled {
     text-decoration: underline;
 }
 
-/* --- RESPONSIVENESS --- */
-@media (max-width: 650px) {
-    body { padding: 15px 10px; }
-    .container { padding: 25px 15px; border-radius: 24px; }
-    h1 { font-size: 22px; }
-    .slots { margin: 20px 0; gap: 8px; }
-    .slot-container h3 { font-size: 12px; }
-    .slot { font-size: 28px; height: 80px; border-radius: 12px; }
-    .v-divider { height: 60px; margin-top: 20px; }
-    button#spinButton { padding: 12px 30px; font-size: 18px; }
-    .accordion-header { padding: 14px 18px; font-size: 16px; }
+
+/* --- RESPONSIVENESS OVERRIDES --- */
+
+/* Tablets and Medium Screens (750px wide or less) */
+@media (max-width: 750px) {
+    .all-links-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2x2 layout for directory */
+    }
+    
+    .collapsible-wrapper.active .accordion-content {
+        max-height: 850px; 
+    }
 }
 
-@media (max-width: 400px) {
-    .slots { gap: 4px; }
-    .slot-container h3 { font-size: 10px; }
-    .slot { font-size: 22px; height: 65px; }
-    .all-links-grid { grid-template-columns: repeat(2, 1fr); }
+/* Smartphones (650px wide or less) - Slots Go Vertical */
+@media (max-width: 650px) {
+    /* ... keep your body, container, and h1 overrides exactly the same ... */
+
+    .slots {
+        flex-direction: column;
+        gap: 20px;
+        margin: 30px auto;
+        width: max-content; 
+    }
+
+    .slot-container {
+        width: 100%;
+    }
+
+    .slot-container h3 {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    /* Keeps them exactly 150px wide on mobile devices */
+    .slot {
+        width: 150px;
+        height: 110px;
+        font-size: 40px;
+    }
+
+    /* UPDATED: Expands the divider line to match the new width of the box */
+    .v-divider {
+        width: 150px; 
+        height: 2px;
+        background-color: #333333;
+        margin: 10px 0;
+    }
+
+    /* ... keep your accordion-header and link-column overrides exactly the same ... */
+}
+
+/* Small/Narrow Smartphones (440px wide or less) */
+@media (max-width: 440px) {
+    /* Directory scales down seamlessly into a single column string stack */
+    .all-links-grid {
+        grid-template-columns: 1fr; 
+        gap: 15px;
+    }
+    
+    .link-column h3 {
+        margin-bottom: 8px;
+    }
+
+    .collapsible-wrapper.active .accordion-content {
+        max-height: 1500px; 
+    }
 }
