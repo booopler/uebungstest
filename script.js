@@ -71,8 +71,12 @@ spinButton.addEventListener('click', () => {
         activeUrls[slot.key] = null;
     });
 
-    // Each slot gets a longer baseline spin duration to create a sequential stop effect
-    const stopTimes = [2200, 3000, 3800, 4600]; 
+    // TIMING MATH:
+    // Slot 1 stops at 10s mark.
+    // Slot 2 stops 4s later (14s).
+    // Slot 3 stops 4s later (18s).
+    // Slot 4 stops 6s later (24s) -> providing that extra 2 seconds of runtime!
+    const stopTimes = [10000, 14000, 18000, 24000]; 
     let completedSlots = 0;
 
     slots.forEach((slot, index) => {
@@ -84,11 +88,15 @@ spinButton.addEventListener('click', () => {
             slot.element.innerText = getRandomNumber();
             elapsedTime += currentIntervalDelay;
 
-            // Deceleration Curve: Gradually increase the delay step intervals as time runs down
-            if (elapsedTime > targetDuration * 0.6) {
-                currentIntervalDelay += 15; 
-            } else if (elapsedTime > targetDuration * 0.3) {
-                currentIntervalDelay += 5;
+            // Deceleration Curve: Smoothly adjusted to adapt to the ultra-long 30s timeline
+            if (elapsedTime > targetDuration * 0.85) {
+                currentIntervalDelay += 35; // Sharp brake at the very end
+            } else if (elapsedTime > targetDuration * 0.65) {
+                currentIntervalDelay += 15; // Noticeable slow down
+            } else if (elapsedTime > targetDuration * 0.4) {
+                currentIntervalDelay += 4;  // Gentle velocity reduction
+            } else if (elapsedTime > targetDuration * 0.15) {
+                currentIntervalDelay += 1;  // Micro adjustments
             }
 
             if (elapsedTime < targetDuration) {
@@ -96,8 +104,12 @@ spinButton.addEventListener('click', () => {
             } else {
                 // Lock down final result for this specific wheel
                 const finalNum = getRandomNumber();
-                slot.element.innerText = finalNum;
+                
+                // Stripping the visual blur target wrapper class BEFORE loading text 
+                // so the text-shadow disappears and snaps to a crisp solid tone instantly.
                 slot.element.classList.remove('spinning');
+                slot.element.innerText = finalNum;
+                
                 activeUrls[slot.key] = formLinks[slot.key][finalNum];
                 slot.element.classList.add('clickable');
 
@@ -136,7 +148,6 @@ window.addEventListener('DOMContentLoaded', () => {
         let html = `<h3>${category.title}</h3><ul>`;
         for (let i = 1; i <= 7; i++) {
             const linkUrl = formLinks[category.key][i];
-            // Changed "Übung ${i}" to "${category.key}_${i}"
             html += `<li><a href="${linkUrl}" target="_blank">${category.key}_${i}</a></li>`;
         }
         html += `</ul>`;
