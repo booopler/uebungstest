@@ -1,0 +1,239 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Courier Prime', monospace;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.container {
+    background: #1e1e1e;
+    padding: 40px 30px;
+    border-radius: 28px; /* Material You: Extra Large Container Token */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #e0e0e0;
+}
+
+h2, h3 {
+    color: #e0e0e0;
+    font-weight: 700;
+}
+
+.slots {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 30px 0;
+}
+
+.slot-container {
+    flex: 1;
+    min-width: 0;
+}
+
+.slot-container h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.slot {
+    font-size: 40px;
+    font-weight: bold;
+    background: #2a2a2a;
+    border: 3px solid #B9BCAE;
+    border-radius: 16px; /* Material You: Large Component Token */
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #B9BCAE;
+    user-select: none;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                background-color 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                filter 0.1s linear;
+}
+
+/* Blur effect applied during spin execution */
+.slot.spinning {
+    filter: blur(2px);
+    opacity: 0.8;
+}
+
+.v-divider {
+    width: 2px;
+    height: 100px;
+    background-color: #333333;
+    margin-top: 35px;
+    flex-shrink: 0;
+}
+
+.slot.clickable {
+    cursor: pointer;
+    background: #222622;
+    box-shadow: 0 0 10px rgba(185, 188, 174, 0.2);
+}
+
+.slot.clickable:hover {
+    background: #B9BCAE;
+    color: #121212;
+    box-shadow: 0 0 15px rgba(185, 188, 174, 0.5);
+    transform: scale(1.04);
+}
+
+/* Spin Button */
+button#spinButton {
+    background-color: #B9BCAE;
+    color: #121212;
+    border: none;
+    padding: 40px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 100px; /* Material You: Full Pill Token */
+    cursor: pointer;
+    transition: opacity 0.3s;
+    font-family: 'Courier Prime', monospace;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 30px;
+}
+
+button#spinButton:hover {
+    opacity: 0.8;
+}
+
+button#spinButton:disabled {
+    background-color: #333333;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.divider {
+    border: 0;
+    height: 2px;
+    background: #333333;
+    margin: 40px 0;
+}
+
+/* Material You Collapsible Layout & Performance Motion */
+.collapsible-wrapper {
+    background: #252525;
+    border-radius: 16px; /* Material You: Large Token */
+    overflow: hidden;
+    text-align: left;
+}
+
+.accordion-header {
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    width: 100%;
+    padding: 18px 24px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.accordion-header .chevron {
+    font-size: 15px;
+    transition: transform 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.collapsible-wrapper.active .chevron {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    padding: 0 24px;
+    /* Material You Standard Emphasized Easing Curve */
+    transition: max-height 400ms cubic-bezier(0.2, 0, 0, 1), 
+                opacity 350ms cubic-bezier(0.2, 0, 0, 1),
+                padding 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.collapsible-wrapper.active .accordion-content {
+    max-height: 500px; /* High boundary fallback limit for auto-animation closure */
+    opacity: 1;
+    visibility: visible;
+    padding: 10px 24px 30px 24px;
+}
+
+.all-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+}
+
+.link-column h3 {
+    border-bottom: 2px solid #B9BCAE;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    color: #B9BCAE;
+    font-size: 20px;
+}
+
+.link-column ul {
+    list-style-type: none;
+}
+
+.link-column li {
+    margin-bottom: 15px;
+    font-size: 15px;
+}
+
+.link-column a {
+    text-decoration: none;
+    color: #B9BCAE;
+    font-weight: bold;
+}
+
+.link-column a:hover {
+    text-decoration: underline;
+}
+
+/* --- RESPONSIVENESS --- */
+@media (max-width: 650px) {
+    body { padding: 15px 10px; }
+    .container { padding: 25px 15px; border-radius: 24px; }
+    h1 { font-size: 22px; }
+    .slots { margin: 20px 0; gap: 8px; }
+    .slot-container h3 { font-size: 12px; }
+    .slot { font-size: 28px; height: 80px; border-radius: 12px; }
+    .v-divider { height: 60px; margin-top: 20px; }
+    button#spinButton { padding: 12px 30px; font-size: 18px; }
+    .accordion-header { padding: 14px 18px; font-size: 16px; }
+}
+
+@media (max-width: 400px) {
+    .slots { gap: 4px; }
+    .slot-container h3 { font-size: 10px; }
+    .slot { font-size: 22px; height: 65px; }
+    .all-links-grid { grid-template-columns: repeat(2, 1fr); }
+}

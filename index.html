@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Übungstest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Übungstest</h1>
+        
+        <div class="slots">
+            <div class="slot-container">
+                <h3>Hören</h3>
+                <div id="slot1" class="slot">?</div>
+            </div>
+            <div class="slot-container">
+                <h3>Lesen</h3>
+                <div id="slot2" class="slot">?</div>
+            </div>
+            <div class="slot-container">
+                <h3>Schreiben</h3>
+                <div id="slot3" class="slot">?</div>
+            </div>
+            
+            <div class="v-divider"></div>
+            
+            <div class="slot-container">
+                <h3>Sprechen</h3>
+                <div id="slot4" class="slot">?</div>
+            </div>
+        </div>
+
+        <button id="spinButton">START</button>
+
+        <div class="collapsible-wrapper">
+            <button id="accordionToggle" class="accordion-header">
+                <span>Direct Links</span>
+                <span class="chevron">▼</span>
+            </button>
+            <div id="accordionContent" class="accordion-content">
+                <div id="allLinksContainer" class="all-links-grid">
+                    </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
