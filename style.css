@@ -280,6 +280,7 @@ button#spinButton:disabled {
 
     /* UPDATED: Expands the divider line to match the new width of the box */
     .v-divider {
+        display: block;   /* FIX: Turns the divider back on for mobile devices */
         width: 150px; 
         height: 2px;
         background-color: #333333;
