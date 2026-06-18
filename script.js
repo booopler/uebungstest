@@ -39,11 +39,13 @@ const formLinks = {
 };
 
 const spinButton = document.getElementById('spinButton');
+
+// UPDATED: Now maps the refresh wrappers and buttons to their respective slots
 const slots = [
-    { element: document.getElementById('slot1'), key: 'hören' },
-    { element: document.getElementById('slot2'), key: 'lesen' },
-    { element: document.getElementById('slot3'), key: 'schreiben' },
-    { element: document.getElementById('slot4'), key: 'sprechen' }
+    { element: document.getElementById('slot1'), key: 'hören', refreshWrap: document.getElementById('refresh1') },
+    { element: document.getElementById('slot2'), key: 'lesen', refreshWrap: document.getElementById('refresh2') },
+    { element: document.getElementById('slot3'), key: 'schreiben', refreshWrap: document.getElementById('refresh3') },
+    { element: document.getElementById('slot4'), key: 'sprechen', refreshWrap: document.getElementById('refresh4') }
 ];
 
 let activeUrls = { hören: null, lesen: null, schreiben: null, sprechen: null };
@@ -52,35 +54,99 @@ function getRandomNumber() {
     return Math.floor(Math.random() * 7) + 1;
 }
 
-// Click events for individual slots
+// ---------------------------------------------------------
+// NEW: Individual Slot Spin Engine (10 Seconds)
+// ---------------------------------------------------------
+function spinSingleSlot(slot) {
+    slot.element.classList.add('spinning');
+    
+    const targetDuration = 10000; // Locked 10 seconds for individual spin
+    let currentIntervalDelay = 40;
+    let elapsedTime = 0;
+
+    function runSingleSpinLoop() {
+        slot.element.innerText = getRandomNumber();
+        elapsedTime += currentIntervalDelay;
+
+        // Deceleration curve isolated for a 10s run
+        if (elapsedTime > targetDuration * 0.85) {
+            currentIntervalDelay += 35; 
+        } else if (elapsedTime > targetDuration * 0.65) {
+            currentIntervalDelay += 15;
+        } else if (elapsedTime > targetDuration * 0.4) {
+            currentIntervalDelay += 4;  
+        } else if (elapsedTime > targetDuration * 0.15) {
+            currentIntervalDelay += 1;  
+        }
+
+        if (elapsedTime < targetDuration) {
+            setTimeout(runSingleSpinLoop, currentIntervalDelay);
+        } else {
+            const finalNum = getRandomNumber();
+            slot.element.classList.remove('spinning');
+            slot.element.innerText = finalNum;
+            
+            activeUrls[slot.key] = formLinks[slot.key][finalNum];
+            slot.element.classList.add('clickable');
+            
+            // Animates the refresh button into view when finished!
+            slot.refreshWrap.classList.add('active');
+        }
+    }
+    setTimeout(runSingleSpinLoop, currentIntervalDelay);
+}
+
+// Click events for individual slots AND their refresh buttons
 slots.forEach(slot => {
+    // 1. Slot Click Handler
     slot.element.addEventListener('click', () => {
+        // If it holds a final link, open it
         if (slot.element.classList.contains('clickable') && activeUrls[slot.key]) {
             window.open(activeUrls[slot.key], '_blank');
+        } 
+        // If it's a "?" (not spinning and not clickable), spin ONLY this slot!
+        else if (!slot.element.classList.contains('spinning') && !slot.element.classList.contains('clickable')) {
+            spinSingleSlot(slot);
         }
     });
+
+// 2. Refresh Button Click Handler
+    const refreshBtn = slot.refreshWrap.querySelector('.refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stops click from accidentally triggering other elements
+            
+            // Remove the old clickable state and reset the active URL
+            slot.element.classList.remove('clickable');
+            activeUrls[slot.key] = null;
+            
+            // Hide the refresh button immediately
+            slot.refreshWrap.classList.remove('active');
+            
+            // Instantly trigger a new 10-second spin for this specific slot!
+            spinSingleSlot(slot);
+        });
+    }
 });
 
-// Authentic Decelerating, Staggered Slot Machine Spin Engine
+// ---------------------------------------------------------
+// Original Global Spin Engine (START Button)
+// ---------------------------------------------------------
 spinButton.addEventListener('click', () => {
     spinButton.disabled = true;
     
     slots.forEach(slot => {
         slot.element.classList.remove('clickable');
         slot.element.classList.add('spinning');
+        slot.refreshWrap.classList.remove('active'); // Hide refresh buttons while global spin runs
         activeUrls[slot.key] = null;
     });
 
-    // TIMING MATH:
-    // Slot 1 stops at 10s mark.
-    // Slot 2 stops 4s later (14s).
-    // Slot 3 stops 4s later (18s).
-    // Slot 4 stops 6s later (24s) -> providing that extra 2 seconds of runtime!
     const stopTimes = [10000, 14000, 18000, 24000]; 
     let completedSlots = 0;
 
     slots.forEach((slot, index) => {
-        let currentIntervalDelay = 40; // Initial ultra-fast baseline pace
+        let currentIntervalDelay = 40; 
         const targetDuration = stopTimes[index];
         let elapsedTime = 0;
 
@@ -88,38 +154,36 @@ spinButton.addEventListener('click', () => {
             slot.element.innerText = getRandomNumber();
             elapsedTime += currentIntervalDelay;
 
-            // Deceleration Curve: Smoothly adjusted to adapt to the ultra-long 30s timeline
             if (elapsedTime > targetDuration * 0.85) {
-                currentIntervalDelay += 35; // Sharp brake at the very end
+                currentIntervalDelay += 35; 
             } else if (elapsedTime > targetDuration * 0.65) {
-                currentIntervalDelay += 15; // Noticeable slow down
+                currentIntervalDelay += 15; 
             } else if (elapsedTime > targetDuration * 0.4) {
-                currentIntervalDelay += 4;  // Gentle velocity reduction
+                currentIntervalDelay += 4;  
             } else if (elapsedTime > targetDuration * 0.15) {
-                currentIntervalDelay += 1;  // Micro adjustments
+                currentIntervalDelay += 1;  
             }
 
             if (elapsedTime < targetDuration) {
                 setTimeout(runSpinLoop, currentIntervalDelay);
             } else {
-                // Lock down final result for this specific wheel
                 const finalNum = getRandomNumber();
                 
-                // Stripping the visual blur target wrapper class BEFORE loading text 
-                // so the text-shadow disappears and snaps to a crisp solid tone instantly.
                 slot.element.classList.remove('spinning');
                 slot.element.innerText = finalNum;
                 
                 activeUrls[slot.key] = formLinks[slot.key][finalNum];
                 slot.element.classList.add('clickable');
+                
+                // Show refresh button for this specific slot once it locks in
+                slot.refreshWrap.classList.add('active'); 
 
                 completedSlots++;
                 if (completedSlots === slots.length) {
-                    spinButton.disabled = false; // Re-enable click accessibility when last wheel settles
+                    spinButton.disabled = false; 
                 }
             }
         }
-
         setTimeout(runSpinLoop, currentIntervalDelay);
     });
 });
@@ -133,6 +197,11 @@ document.getElementById('accordionToggle').addEventListener('click', function() 
 // Auto-generate link columns inside the folder menu
 window.addEventListener('DOMContentLoaded', () => {
     const allLinksContainer = document.getElementById('allLinksContainer');
+    
+    // FIX: Explicitly forces the container to declare the layout class name
+    if (allLinksContainer) {
+        allLinksContainer.className = 'all-links-grid';
+    }
     
     const categories = [
         { key: 'hören', title: 'Hören' },

@@ -41,16 +41,18 @@ h2, h3 {
     justify-content: center; 
     align-items: flex-start; 
     gap: 24px;               
-    margin: 30px auto;       /* Centers the layout container dynamically */
-    flex-wrap: wrap;         /* FIX: Allows boxes to drop to a new line safely if zoomed in */
-    max-width: 100%;         /* Prevents breaking past the container walls */
+    margin: 30px auto;       
+    flex-wrap: wrap;         
+    max-width: 100%;         
+    position: relative;
+    z-index: 1;
 }
 
 .slot-container {
     flex: 1;
     min-width: 0;
-    max-width: 150px; /* UPDATED: Prevents text container from overstretching */
-    width: 150px;     /* UPDATED: Forces headers to match the 150px boundary */
+    max-width: 150px; 
+    width: 150px;     
 }
 
 .slot-container h3 {
@@ -66,12 +68,9 @@ h2, h3 {
     font-weight: bold;
     background: #2a2a2a;
     border: 3px solid #B9BCAE;
-    border-radius: 16px; /* Material You: Large Component Token */
-    
-    /* UPDATED: Wider rectangular dimensions */
+    border-radius: 16px; 
     width: 150px;
     height: 110px;
-    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,12 +81,21 @@ h2, h3 {
                 filter 0.1s linear;
 }
 
-/* FIX: Blurs only the text number while keeping the box border crisp */
+/* --- HOVER ANIMATION FOR '?' SLOT --- */
+
+/* Only animate if the slot is NOT spinning and NOT already clickable */
+.slot:not(.spinning):not(.clickable):hover {
+    background-color: #333333; /* Slightly lighter shade */
+    transform: scale(1.05);     /* Gentle zoom */
+    cursor: pointer;            /* Shows it's interactive */
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1),  /* Smooth transition */
+}
+
 .slot.spinning {
     color: transparent;
     text-shadow: 0 0 9px rgba(185, 188, 174, 0.8);
     opacity: 0.5;
-    transform: scale(0.95); /* Optional subtle dynamic snap effect during spinning */
+    transform: scale(0.95); 
 }
 
 .v-divider {
@@ -98,7 +106,6 @@ h2, h3 {
     flex-shrink: 0;
 }
 
-/* FIX: If the viewport is crowded or heavily zoomed, hide the vertical line */
 @media (max-width: 720px) {
     .v-divider {
         display: none; 
@@ -115,36 +122,66 @@ h2, h3 {
     background: #B9BCAE;
     color: #121212;
     box-shadow: 0 0 15px rgba(185, 188, 174, 0.5);
-    transform: scale(1.04);
+    transform: scale(1.05);
 }
 
-/* Spin Button */
+/* Spin Button Base Style */
 button#spinButton {
-    background-color: #B9BCAE;
-    color: #121212;
+    position: relative;        
+    z-index: 2;                
+    background-color: transparent; 
+    color: #121212;            
     border: none;
-    padding: 40px 40px; /* Locked desktop padding */
-    font-size: 20px;
+    font-size: 20px;          
     font-weight: bold;
-    border-radius: 100px; /* Material You: Full Pill Token */
+    border-radius: 100px; 
     cursor: pointer;
-    transition: opacity 0.3s;
     font-family: 'Courier Prime', monospace;
-    
-    /* FIX: Completely frozen dimensions across all screens */
     width: 280px; 
-    height: 106px; /* Explicit height to preserve the desktop aspect ratio */
+    height: 106px; 
     margin-bottom: 30px;
+    overflow: visible;         
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+button#spinButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #B9BCAE; 
+    border-radius: 100px;
+    z-index: -1;               
+    will-change: transform;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                background-color 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
 button#spinButton:hover {
-    opacity: 0.8;
+    color: #B9BCAE;            
+}
+
+button#spinButton:hover::before {
+    background-color: #222622; 
+    box-shadow: 0 0 15px rgba(185, 188, 174, 0.4); 
+    transform: scale(1.05);    
 }
 
 button#spinButton:disabled {
-    background-color: #333333;
-    color: #666666;
+    color: #666666 !important;
     cursor: not-allowed;
+}
+
+button#spinButton:disabled::before {
+    background-color: #333333 !important;
+    transform: none !important;                       
+    box-shadow: none !important;                      
 }
 
 .divider {
@@ -157,9 +194,14 @@ button#spinButton:disabled {
 /* Material You Collapsible Layout & Performance Motion */
 .collapsible-wrapper {
     background: #252525;
-    border-radius: 16px; /* Material You: Large Token */
-    overflow: hidden;
+    border-radius: 16px; 
     text-align: left;
+    position: relative;
+    z-index: 5; 
+}
+
+.collapsible-wrapper.active {
+    overflow: visible; 
 }
 
 .accordion-header {
@@ -191,23 +233,25 @@ button#spinButton:disabled {
     opacity: 0;
     visibility: hidden;
     padding: 0 24px;
-    /* Material You Standard Emphasized Easing Curve */
-    transition: max-height 400ms cubic-bezier(0.2, 0, 0, 1), 
+    overflow: hidden; 
+    transition: max-height 200ms cubic-bezier(0.2, 0, 0, 1), 
                 opacity 350ms cubic-bezier(0.2, 0, 0, 1),
                 padding 400ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .collapsible-wrapper.active .accordion-content {
-    max-height: 500px; /* High boundary fallback limit for auto-animation closure */
+    max-height: 2000px; /* Room for content expansion */
     opacity: 1;
     visibility: visible;
     padding: 10px 24px 30px 24px;
 }
 
-.all-links-grid {
+/* TARGETS BOTH IDs & CLASSES FOR ABSOLUTE SAFETY */
+#allLinksContainer, .all-links-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Forces exactly 4 even columns on desktop */
+    grid-template-columns: repeat(4, 1fr); 
     gap: 20px;
+    width: 100%;
 }
 
 .link-column h3 {
@@ -231,78 +275,107 @@ button#spinButton:disabled {
     text-decoration: none;
     color: #B9BCAE;
     font-weight: bold;
+    display: inline-block;
 }
 
 .link-column a:hover {
     text-decoration: underline;
 }
 
-
 /* --- RESPONSIVENESS OVERRIDES --- */
-
-/* Tablets and Medium Screens (750px wide or less) */
 @media (max-width: 750px) {
-    .all-links-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2x2 layout for directory */
-    }
-    
-    .collapsible-wrapper.active .accordion-content {
-        max-height: 850px; 
+    #allLinksContainer, .all-links-grid {
+        grid-template-columns: repeat(2, 1fr); 
     }
 }
 
-/* Smartphones (650px wide or less) - Slots Go Vertical */
 @media (max-width: 650px) {
-    /* ... keep your body, container, and h1 overrides exactly the same ... */
-
     .slots {
         flex-direction: column;
         gap: 20px;
         margin: 30px auto;
         width: max-content; 
     }
-
-    .slot-container {
-        width: 100%;
-    }
-
-    .slot-container h3 {
-        font-size: 20px;
-        margin-bottom: 8px;
-    }
-
-    /* Keeps them exactly 150px wide on mobile devices */
-    .slot {
-        width: 150px;
-        height: 110px;
-        font-size: 40px;
-    }
-
-    /* UPDATED: Expands the divider line to match the new width of the box */
+    .slot-container { width: 100%; }
+    .slot-container h3 { font-size: 20px; margin-bottom: 8px; }
+    .slot { width: 150px; height: 110px; font-size: 40px; }
     .v-divider {
-        display: block;   /* FIX: Turns the divider back on for mobile devices */
+        display: block;   
         width: 150px; 
         height: 2px;
         background-color: #333333;
         margin: 10px 0;
     }
-
-    /* ... keep your accordion-header and link-column overrides exactly the same ... */
 }
 
-/* Small/Narrow Smartphones (440px wide or less) */
 @media (max-width: 440px) {
-    /* Directory scales down seamlessly into a single column string stack */
-    .all-links-grid {
+    #allLinksContainer, .all-links-grid {
         grid-template-columns: 1fr; 
-        gap: 15px;
     }
-    
-    .link-column h3 {
-        margin-bottom: 8px;
-    }
+}
 
-    .collapsible-wrapper.active .accordion-content {
-        max-height: 1500px; 
-    }
+/* --- REFRESH BUTTON COMPONENT --- */
+.refresh-wrapper {
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden; 
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+    transition: max-height 400ms cubic-bezier(0.2, 0, 0, 1), 
+                opacity 350ms cubic-bezier(0.2, 0, 0, 1),
+                margin-top 400ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.refresh-wrapper.active {
+    max-height: 80px;      
+    opacity: 1;
+    visibility: visible;
+    margin-top: 15px; 
+    padding: 10px 0;       /* FIX: Gives perfect top/bottom padding cushion space so scaling never touches hidden bounds */
+    overflow: visible;     /* FIX: Allows safe hover scale pop out */
+}
+
+.refresh-btn {
+    position: relative;    
+    z-index: 1;
+    background-color: transparent; 
+    color: #B9BCAE;
+    border: none;          
+    border-radius: 50%;
+    width: 42px;           
+    height: 42px;
+    font-size: 20px;       
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-family: inherit;
+    transition: color 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.refresh-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid #B9BCAE;
+    background-color: transparent;
+    border-radius: 50%;
+    z-index: -1;           
+    will-change: transform;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), 
+                background-color 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.refresh-btn:hover {
+    color: #121212;        
+}
+
+.refresh-btn:hover::before {
+    background-color: #B9BCAE; 
+    transform: scale(1.1); /* Safe clean scaling up */
 }
