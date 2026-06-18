@@ -1,46 +1,32 @@
 // --- PASTE YOUR GOOGLE FORM LINKS HERE ---
 const formLinks = {
     hören: {
-        1: "https://forms.gle/ZqYTRpyNj8ZcVfnL9",
-        2: "https://forms.gle/beMXs2daEzUemu2YA",
-        3: "https://forms.gle/bwdELZCufNJQsoD76",
-        4: "https://forms.gle/QvfaSqxXD8STDtVJ9",
-        5: "https://forms.gle/cHgBn5U29yZ8fK8c9",
-        6: "https://forms.gle/GDzfnEhZ7pg2xGs77",
+        1: "https://forms.gle/ZqYTRpyNj8ZcVfnL9", 2: "https://forms.gle/beMXs2daEzUemu2YA",
+        3: "https://forms.gle/bwdELZCufNJQsoD76", 4: "https://forms.gle/QvfaSqxXD8STDtVJ9",
+        5: "https://forms.gle/cHgBn5U29yZ8fK8c9", 6: "https://forms.gle/GDzfnEhZ7pg2xGs77",
         7: "https://forms.gle/SdVVudNmGvsxGMBM8",
     },
     lesen: {
-        1: "https://forms.gle/rpFcB4U9GjcgtUn27",
-        2: "https://forms.gle/b1PaNCHgMEtrH2DcA",
-        3: "https://forms.gle/FqbS9g9wpWKQnQHj6",
-        4: "https://forms.gle/JTuNReSUwLJyJKxc7",
-        5: "https://forms.gle/ebzVdJ4WL4BZ9XTB8",
-        6: "https://forms.gle/RbTTANduezPjiACe7",
+        1: "https://forms.gle/rpFcB4U9GjcgtUn27", 2: "https://forms.gle/b1PaNCHgMEtrH2DcA",
+        3: "https://forms.gle/FqbS9g9wpWKQnQHj6", 4: "https://forms.gle/JTuNReSUwLJyJKxc7",
+        5: "https://forms.gle/ebzVdJ4WL4BZ9XTB8", 6: "https://forms.gle/RbTTANduezPjiACe7",
         7: "https://forms.gle/uZyPUcN3NQUmL4G99",
     },
     schreiben: {
-        1: "https://forms.gle/GocziSkucob4VZgs5",
-        2: "https://forms.gle/tkee5Fmogrk1MUBQ8",
-        3: "https://forms.gle/bpFaMqcjT63fAFYN7",
-        4: "https://forms.gle/PzM4v84aD3WXX6g78",
-        5: "https://forms.gle/1HmQhfEsdzaYGdbQ6",
-        6: "https://forms.gle/hj3STibRCpd2wJRY7",
+        1: "https://forms.gle/GocziSkucob4VZgs5", 2: "https://forms.gle/tkee5Fmogrk1MUBQ8",
+        3: "https://forms.gle/bpFaMqcjT63fAFYN7", 4: "https://forms.gle/PzM4v84aD3WXX6g78",
+        5: "https://forms.gle/1HmQhfEsdzaYGdbQ6", 6: "https://forms.gle/hj3STibRCpd2wJRY7",
         7: "https://forms.gle/gF6RWo6N76KPpGYx7",
     },
     sprechen: {
-        1: "https://forms.gle/17kwqDYGTjgQMGvE8",
-        2: "https://forms.gle/vbF65ioSJZbSdZuu7",
-        3: "https://forms.gle/tbAG74vwZWpYV1dy7",
-        4: "https://forms.gle/5sARUYpNWZcExkYYA",
-        5: "https://forms.gle/1sYNkoM3ncxjpyKUA",
-        6: "https://forms.gle/Ks5fd58GmptEdJDb8",
+        1: "https://forms.gle/17kwqDYGTjgQMGvE8", 2: "https://forms.gle/vbF65ioSJZbSdZuu7",
+        3: "https://forms.gle/tbAG74vwZWpYV1dy7", 4: "https://forms.gle/5sARUYpNWZcExkYYA",
+        5: "https://forms.gle/1sYNkoM3ncxjpyKUA", 6: "https://forms.gle/Ks5fd58GmptEdJDb8",
         7: "https://forms.gle/F2NYZcLjgtWNtr1Q6",
     }
 };
 
 const spinButton = document.getElementById('spinButton');
-
-// UPDATED: Now maps the refresh wrappers and buttons to their respective slots
 const slots = [
     { element: document.getElementById('slot1'), key: 'hören', refreshWrap: document.getElementById('refresh1') },
     { element: document.getElementById('slot2'), key: 'lesen', refreshWrap: document.getElementById('refresh2') },
@@ -54,30 +40,28 @@ function getRandomNumber() {
     return Math.floor(Math.random() * 7) + 1;
 }
 
-// ---------------------------------------------------------
-// NEW: Individual Slot Spin Engine (10 Seconds)
-// ---------------------------------------------------------
-
-// --- NEW: Helper to check if anything is spinning ---
+// Helper to detect if ANY slot on the board is currently spinning
 function isAnySlotSpinning() {
     return slots.some(slot => slot.element.classList.contains('spinning'));
 }
 
-function spinSingleSlot(slot) {
-    // LOCK the start button so the user can't trigger a global spin simultaneously
-    spinButton.disabled = true;
+// --- UNIFIED SPIN ENGINE ---
+function startSpin(slot, targetDuration) {
+    spinButton.disabled = true; 
     
+    slot.element.classList.remove('clickable');
     slot.element.classList.add('spinning');
+    slot.refreshWrap.classList.remove('active');
+    activeUrls[slot.key] = null;
     
-    const targetDuration = 10000;
     let currentIntervalDelay = 40;
     let elapsedTime = 0;
 
-    function runSingleSpinLoop() {
+    function runSpinLoop() {
         slot.element.innerText = getRandomNumber();
         elapsedTime += currentIntervalDelay;
 
-        // Deceleration curve isolated for a 10s run
+        // Dynamic deceleration curve based on the target duration
         if (elapsedTime > targetDuration * 0.85) {
             currentIntervalDelay += 35; 
         } else if (elapsedTime > targetDuration * 0.65) {
@@ -89,7 +73,7 @@ function spinSingleSlot(slot) {
         }
 
         if (elapsedTime < targetDuration) {
-            setTimeout(runSingleSpinLoop, currentIntervalDelay);
+            setTimeout(runSpinLoop, currentIntervalDelay);
         } else {
             const finalNum = getRandomNumber();
             slot.element.classList.remove('spinning');
@@ -97,121 +81,55 @@ function spinSingleSlot(slot) {
             
             activeUrls[slot.key] = formLinks[slot.key][finalNum];
             slot.element.classList.add('clickable');
-            
             slot.refreshWrap.classList.add('active');
             
-            // UNLOCK the start button now that this specific slot is finished
-            spinButton.disabled = false;
+            // Only re-enable if NO slots are spinning anymore
+            if (!isAnySlotSpinning()) {
+                spinButton.disabled = false;
+            }
         }
     }
-    setTimeout(runSingleSpinLoop, currentIntervalDelay);
+    setTimeout(runSpinLoop, currentIntervalDelay);
 }
 
-// Click events for individual slots AND their refresh buttons
+// 1. Click events for individual slots & refresh buttons
 slots.forEach(slot => {
-    // 1. Slot Click Handler
+    // Action for clicking the main slot box
     slot.element.addEventListener('click', () => {
-        // If it holds a final link, open it
         if (slot.element.classList.contains('clickable') && activeUrls[slot.key]) {
             window.open(activeUrls[slot.key], '_blank');
-        } 
-        // If it's a "?" (not spinning and not clickable), spin ONLY this slot!
-        else if (!slot.element.classList.contains('spinning') && !slot.element.classList.contains('clickable')) {
-            spinSingleSlot(slot);
+        } else if (!slot.element.classList.contains('spinning') && !slot.element.classList.contains('clickable')) {
+            startSpin(slot, 10000); // Keep the 10-second rule for the main slot click
         }
     });
 
-// 2. Refresh Button Click Handler (Upgraded to Auto-Spin)
+    // Action for clicking the refresh button below the slot
     const refreshBtn = slot.refreshWrap.querySelector('.refresh-btn');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevents clicking the slot background accidentally
-            
-            // 1. Reset state
-            slot.element.innerText = '?';
-            slot.element.classList.remove('clickable');
-            activeUrls[slot.key] = null;
-            slot.refreshWrap.classList.remove('active');
-            
-            // 2. Immediately trigger the spin engine
-            spinSingleSlot(slot);
+            e.stopPropagation();
+            startSpin(slot, 5000); // Quick 5-second roll for the refresh button
         });
     }
 });
 
-// ---------------------------------------------------------
-// Original Global Spin Engine (START Button)
-// ---------------------------------------------------------
+// 2. Global Spin Engine (START Button)
 spinButton.addEventListener('click', () => {
-    spinButton.disabled = true;
-    
-    slots.forEach(slot => {
-        slot.element.classList.remove('clickable');
-        slot.element.classList.add('spinning');
-        slot.refreshWrap.classList.remove('active'); // Hide refresh buttons while global spin runs
-        activeUrls[slot.key] = null;
-    });
-
     const stopTimes = [10000, 14000, 18000, 24000]; 
-    let completedSlots = 0;
-
     slots.forEach((slot, index) => {
-        let currentIntervalDelay = 40; 
-        const targetDuration = stopTimes[index];
-        let elapsedTime = 0;
-
-        function runSpinLoop() {
-            slot.element.innerText = getRandomNumber();
-            elapsedTime += currentIntervalDelay;
-
-            if (elapsedTime > targetDuration * 0.85) {
-                currentIntervalDelay += 35; 
-            } else if (elapsedTime > targetDuration * 0.65) {
-                currentIntervalDelay += 15; 
-            } else if (elapsedTime > targetDuration * 0.4) {
-                currentIntervalDelay += 4;  
-            } else if (elapsedTime > targetDuration * 0.15) {
-                currentIntervalDelay += 1;  
-            }
-
-            if (elapsedTime < targetDuration) {
-                setTimeout(runSpinLoop, currentIntervalDelay);
-            } else {
-                const finalNum = getRandomNumber();
-                
-                slot.element.classList.remove('spinning');
-                slot.element.innerText = finalNum;
-                
-                activeUrls[slot.key] = formLinks[slot.key][finalNum];
-                slot.element.classList.add('clickable');
-                
-                // Show refresh button for this specific slot once it locks in
-                slot.refreshWrap.classList.add('active'); 
-
-                completedSlots++;
-                if (completedSlots === slots.length) {
-                    spinButton.disabled = false; 
-                }
-            }
-        }
-        setTimeout(runSpinLoop, currentIntervalDelay);
+        startSpin(slot, stopTimes[index]);
     });
 });
 
-// Handle Collapsible Directory Component Interactions
+// 3. Handle Collapsible Directory Component Interactions
 document.getElementById('accordionToggle').addEventListener('click', function() {
-    const wrapper = this.parentElement;
-    wrapper.classList.toggle('active');
+    this.parentElement.classList.toggle('active');
 });
 
-// Auto-generate link columns inside the folder menu
+// 4. Auto-generate link columns inside the folder menu
 window.addEventListener('DOMContentLoaded', () => {
     const allLinksContainer = document.getElementById('allLinksContainer');
-    
-    // FIX: Explicitly forces the container to declare the layout class name
-    if (allLinksContainer) {
-        allLinksContainer.className = 'all-links-grid';
-    }
+    if (allLinksContainer) allLinksContainer.className = 'all-links-grid';
     
     const categories = [
         { key: 'hören', title: 'Hören' },
@@ -226,8 +144,7 @@ window.addEventListener('DOMContentLoaded', () => {
         
         let html = `<h3>${category.title}</h3><ul>`;
         for (let i = 1; i <= 7; i++) {
-            const linkUrl = formLinks[category.key][i];
-            html += `<li><a href="${linkUrl}" target="_blank">${category.key}_${i}</a></li>`;
+            html += `<li><a href="${formLinks[category.key][i]}" target="_blank">${category.key}_${i}</a></li>`;
         }
         html += `</ul>`;
         
