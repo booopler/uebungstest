@@ -57,10 +57,21 @@ function getRandomNumber() {
 // ---------------------------------------------------------
 // NEW: Individual Slot Spin Engine (10 Seconds)
 // ---------------------------------------------------------
+
+// --- NEW: Helper to check if anything is spinning ---
+function isAnySlotSpinning() {
+    return slots.some(slot => slot.element.classList.contains('spinning'));
+}
+
+// --- UPDATED: Spin Single Slot ---
 function spinSingleSlot(slot) {
+    // Disable START button when individual spin starts
+    spinButton.disabled = true; 
+    
+    slot.element.classList.remove('clickable'); // Remove clickable while spinning
     slot.element.classList.add('spinning');
     
-    const targetDuration = 10000; // Locked 10 seconds for individual spin
+    const targetDuration = 10000;
     let currentIntervalDelay = 40;
     let elapsedTime = 0;
 
@@ -82,15 +93,15 @@ function spinSingleSlot(slot) {
         if (elapsedTime < targetDuration) {
             setTimeout(runSingleSpinLoop, currentIntervalDelay);
         } else {
-            const finalNum = getRandomNumber();
             slot.element.classList.remove('spinning');
-            slot.element.innerText = finalNum;
-            
-            activeUrls[slot.key] = formLinks[slot.key][finalNum];
+            slot.element.innerText = getRandomNumber();
             slot.element.classList.add('clickable');
-            
-            // Animates the refresh button into view when finished!
             slot.refreshWrap.classList.add('active');
+            
+            // Re-enable START button only if NO other slots are spinning
+            if (!isAnySlotSpinning()) {
+                spinButton.disabled = false;
+            }
         }
     }
     setTimeout(runSingleSpinLoop, currentIntervalDelay);

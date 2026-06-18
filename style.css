@@ -379,3 +379,19 @@ button#spinButton:disabled::before {
     background-color: #B9BCAE; 
     transform: scale(1.05); /* Safe clean scaling up */
 }
+
+/* Ensure the button looks disabled when spinButton.disabled = true is set */
+button#spinButton:disabled {
+    cursor: not-allowed !important;
+    opacity: 0.5; /* Visual cue that it's inactive */
+    filter: grayscale(1);
+    transform: none !important;
+    background-color: #333333 !important; /* Forces a neutral dark gray */
+}
+
+/* Stops the hover effect from triggering while disabled */
+button#spinButton:disabled:hover::before {
+    background-color: #333333 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
