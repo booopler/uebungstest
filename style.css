@@ -234,7 +234,7 @@ button#spinButton:disabled::before {
     visibility: hidden;
     padding: 0 24px;
     overflow: hidden; 
-    transition: max-height 200ms cubic-bezier(0.2, 0, 0, 1), 
+    transition: max-height 400ms cubic-bezier(0.2, 0, 0, 1), 
                 opacity 350ms cubic-bezier(0.2, 0, 0, 1),
                 padding 400ms cubic-bezier(0.2, 0, 0, 1);
 }
@@ -377,5 +377,5 @@ button#spinButton:disabled::before {
 
 .refresh-btn:hover::before {
     background-color: #B9BCAE; 
-    transform: scale(1.1); /* Safe clean scaling up */
+    transform: scale(1.05); /* Safe clean scaling up */
 }
