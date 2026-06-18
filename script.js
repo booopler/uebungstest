@@ -63,12 +63,10 @@ function isAnySlotSpinning() {
     return slots.some(slot => slot.element.classList.contains('spinning'));
 }
 
-// --- UPDATED: Spin Single Slot ---
 function spinSingleSlot(slot) {
-    // Disable START button when individual spin starts
-    spinButton.disabled = true; 
+    // LOCK the start button so the user can't trigger a global spin simultaneously
+    spinButton.disabled = true;
     
-    slot.element.classList.remove('clickable'); // Remove clickable while spinning
     slot.element.classList.add('spinning');
     
     const targetDuration = 10000;
@@ -93,15 +91,17 @@ function spinSingleSlot(slot) {
         if (elapsedTime < targetDuration) {
             setTimeout(runSingleSpinLoop, currentIntervalDelay);
         } else {
+            const finalNum = getRandomNumber();
             slot.element.classList.remove('spinning');
-            slot.element.innerText = getRandomNumber();
+            slot.element.innerText = finalNum;
+            
+            activeUrls[slot.key] = formLinks[slot.key][finalNum];
             slot.element.classList.add('clickable');
+            
             slot.refreshWrap.classList.add('active');
             
-            // Re-enable START button only if NO other slots are spinning
-            if (!isAnySlotSpinning()) {
-                spinButton.disabled = false;
-            }
+            // UNLOCK the start button now that this specific slot is finished
+            spinButton.disabled = false;
         }
     }
     setTimeout(runSingleSpinLoop, currentIntervalDelay);
@@ -121,20 +121,19 @@ slots.forEach(slot => {
         }
     });
 
-// 2. Refresh Button Click Handler
+// 2. Refresh Button Click Handler (Upgraded to Auto-Spin)
     const refreshBtn = slot.refreshWrap.querySelector('.refresh-btn');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Stops click from accidentally triggering other elements
+            e.stopPropagation(); // Prevents clicking the slot background accidentally
             
-            // Remove the old clickable state and reset the active URL
+            // 1. Reset state
+            slot.element.innerText = '?';
             slot.element.classList.remove('clickable');
             activeUrls[slot.key] = null;
-            
-            // Hide the refresh button immediately
             slot.refreshWrap.classList.remove('active');
             
-            // Instantly trigger a new 10-second spin for this specific slot!
+            // 2. Immediately trigger the spin engine
             spinSingleSlot(slot);
         });
     }
