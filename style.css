@@ -13,13 +13,19 @@ body {
     color: #e0e0e0;
     display: flex;
     justify-content: center;
-    align-items: flex-start; 
+    align-items: flex-start;
     min-height: 100vh;
     padding: 40px 20px;
 }
 
-h1 { font-size: 40px; margin-bottom: 10px; }
-h2, h3 { font-weight: 700; }
+h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+h2, h3 {
+    font-weight: 700;
+}
 
 /* =========================================
    2. MAIN LAYOUT
@@ -28,7 +34,7 @@ h2, h3 { font-weight: 700; }
     background: #1e1e1e;
     padding: 40px 30px;
     border-radius: 28px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
     text-align: center;
     max-width: 800px;
     width: 100%;
@@ -36,15 +42,16 @@ h2, h3 { font-weight: 700; }
 
 .slots {
     display: flex;
-    justify-content: center; 
-    align-items: flex-start; 
-    gap: 24px;               
-    margin: 30px auto;       
-    flex-wrap: wrap;         
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    margin: 30px auto;
+    flex-wrap: wrap;
     position: relative;
     z-index: 1;
 }
 
+/* Vertical divider for larger screens */
 .v-divider {
     width: 2px;
     height: 100px;
@@ -59,7 +66,7 @@ h2, h3 { font-weight: 700; }
 .slot-container {
     flex: 1;
     min-width: 0;
-    max-width: 150px; 
+    max-width: 150px;
 }
 
 .slot-container h3 {
@@ -73,42 +80,62 @@ h2, h3 { font-weight: 700; }
 .slot {
     font-size: 40px;
     font-weight: bold;
-    background: #2a2a2a;
-    border: 3px solid #B9BCAE;
-    border-radius: 16px; 
     width: 150px;
     height: 110px;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #B9BCAE;
+    color: #b9bcae;
     user-select: none;
-    /* Explicit transitions for smoothness */
-    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
 }
 
+/* Slot background and border decoupled for scaling effects */
+.slot::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #2a2a2a;
+    border: 3px solid #b9bcae;
+    border-radius: 16px;
+    z-index: -1;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover state for an inactive, non-spinning slot */
 .slot:not(.spinning):not(.clickable):hover {
+    cursor: pointer;
+}
+.slot:not(.spinning):not(.clickable):hover::before {
     background-color: #333333;
-    transform: scale(1.05);     
-    cursor: pointer;            
+    transform: scale(1.05);
 }
 
+/* Spinning animation states */
 .slot.spinning {
     color: transparent;
     text-shadow: 0 0 9px rgba(185, 188, 174, 0.8);
     opacity: 0.5;
-    transform: scale(0.95); 
+}
+.slot.spinning::before {
+    transform: scale(0.95);
 }
 
+/* Clickable (result ready) states */
 .slot.clickable {
     cursor: pointer;
+}
+.slot.clickable::before {
     background: #222622;
     box-shadow: 0 0 10px rgba(185, 188, 174, 0.2);
 }
-
 .slot.clickable:hover {
-    background: #B9BCAE;
     color: #121212;
+}
+.slot.clickable:hover::before {
+    background: #b9bcae;
     box-shadow: 0 0 15px rgba(185, 188, 174, 0.5);
     transform: scale(1.05);
 }
@@ -117,18 +144,18 @@ h2, h3 { font-weight: 700; }
    4. BUTTONS
    ========================================= */
 #spinButton {
-    position: relative;        
-    z-index: 2;                
-    background-color: transparent; 
-    color: #121212;            
+    position: relative;
+    z-index: 2;
+    background-color: transparent;
+    color: #121212;
     border: none;
-    font-size: 20px;          
+    font-size: 20px;
     font-weight: bold;
-    border-radius: 100px; 
+    border-radius: 100px;
     cursor: pointer;
     font-family: inherit;
-    width: 280px; 
-    height: 106px; 
+    width: 280px;
+    height: 106px;
     margin-bottom: 30px;
     display: inline-flex;
     justify-content: center;
@@ -140,33 +167,35 @@ h2, h3 { font-weight: 700; }
     content: '';
     position: absolute;
     inset: 0;
-    background-color: #B9BCAE; 
+    background-color: #b9bcae;
     border-radius: 100px;
-    z-index: -1;               
+    z-index: -1;
     transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-#spinButton:hover { color: #B9BCAE; }
-
+#spinButton:hover {
+    color: #b9bcae;
+}
 #spinButton:hover::before {
-    background-color: #222622; 
-    box-shadow: 0 0 15px rgba(185, 188, 174, 0.4); 
-    transform: scale(1.05);    
+    background-color: #222622;
+    box-shadow: 0 0 15px rgba(185, 188, 174, 0.4);
+    transform: scale(1.05);
 }
 
+/* Disabled state */
 #spinButton:disabled {
     cursor: not-allowed;
     color: #666666;
     opacity: 0.5;
     filter: grayscale(1);
 }
-
 #spinButton:disabled::before {
     background-color: #333333;
-    transform: none;                       
-    box-shadow: none;                      
+    transform: none;
+    box-shadow: none;
 }
 
+/* Slot refresh controls */
 .refresh-wrapper {
     max-height: 0;
     opacity: 0;
@@ -178,23 +207,23 @@ h2, h3 { font-weight: 700; }
 }
 
 .refresh-wrapper.active {
-    max-height: 80px;      
+    max-height: 80px;
     opacity: 1;
     visibility: visible;
-    margin-top: 15px; 
-    padding: 10px 0;       
-    overflow: visible;     
+    margin-top: 15px;
+    padding: 10px 0;
+    overflow: visible;
 }
 
 .refresh-btn {
-    position: relative;    
+    position: relative;
     z-index: 1;
-    background-color: transparent; 
-    color: #B9BCAE;
-    border: none;          
-    width: 42px;           
+    background-color: transparent;
+    color: #b9bcae;
+    border: none;
+    width: 42px;
     height: 42px;
-    font-size: 20px;       
+    font-size: 20px;
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
@@ -207,16 +236,18 @@ h2, h3 { font-weight: 700; }
     content: '';
     position: absolute;
     inset: 0;
-    border: 2px solid #B9BCAE;
+    border: 2px solid #b9bcae;
     border-radius: 50%;
-    z-index: -1;           
+    z-index: -1;
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.refresh-btn:hover { color: #121212; }
+.refresh-btn:hover {
+    color: #121212;
+}
 .refresh-btn:hover::before {
-    background-color: #B9BCAE; 
-    transform: scale(1.05); 
+    background-color: #b9bcae;
+    transform: scale(1.05);
 }
 
 /* =========================================
@@ -224,13 +255,15 @@ h2, h3 { font-weight: 700; }
    ========================================= */
 .collapsible-wrapper {
     background: #252525;
-    border-radius: 16px; 
+    border-radius: 16px;
     text-align: left;
     position: relative;
-    z-index: 5; 
+    z-index: 5;
 }
 
-.collapsible-wrapper.active { overflow: visible; }
+.collapsible-wrapper.active {
+    overflow: visible;
+}
 
 .accordion-header {
     background: none;
@@ -252,14 +285,16 @@ h2, h3 { font-weight: 700; }
     transition: transform 0.4s ease;
 }
 
-.collapsible-wrapper.active .chevron { transform: rotate(180deg); }
+.collapsible-wrapper.active .chevron {
+    transform: rotate(180deg);
+}
 
 .accordion-content {
     max-height: 0;
     opacity: 0;
     visibility: hidden;
     padding: 0 24px;
-    overflow: hidden; 
+    overflow: hidden;
     transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease, visibility 0.4s ease;
 }
 
@@ -272,54 +307,75 @@ h2, h3 { font-weight: 700; }
 
 #allLinksContainer {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     width: 100%;
 }
 
 .link-column h3 {
-    border-bottom: 2px solid #B9BCAE;
+    border-bottom: 2px solid #333333;
     padding-bottom: 5px;
     margin-bottom: 15px;
-    color: #B9BCAE;
     font-size: 20px;
 }
 
-.link-column ul { list-style-type: none; }
-.link-column li { margin-bottom: 15px; font-size: 15px; }
+.link-column ul {
+    list-style-type: none;
+}
+.link-column li {
+    margin-bottom: 15px;
+    font-size: 15px;
+}
 .link-column a {
     text-decoration: none;
-    color: #B9BCAE;
+    color: #b9bcae;
     font-weight: bold;
     display: inline-block;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
-.link-column a:hover { text-decoration: underline; }
+
+.link-column a:hover {
+    background-color: #d1d4c5;
+    color: #121212;
+    box-shadow: 0 0 4px rgba(185, 188, 174, 0.8);
+}
 
 /* =========================================
    6. RESPONSIVE DESIGN
    ========================================= */
 @media (max-width: 750px) {
-    #allLinksContainer { grid-template-columns: repeat(2, 1fr); }
-    .v-divider { display: none; }
+    #allLinksContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .v-divider {
+        display: none;
+    }
 }
 
 @media (max-width: 650px) {
     .slots {
         flex-direction: column;
         gap: 20px;
-        width: max-content; 
+        width: max-content;
     }
-    .slot-container { width: 100%; }
-    .slot-container h3 { margin-bottom: 8px; }
-    
+    .slot-container {
+        width: 100%;
+    }
+    .slot-container h3 {
+        margin-bottom: 8px;
+    }
     .v-divider {
-        display: block;   
-        width: 150px; 
+        display: block;
+        width: 150px;
         height: 2px;
         margin: 10px 0;
     }
 }
 
 @media (max-width: 440px) {
-    #allLinksContainer { grid-template-columns: 1fr; }
+    #allLinksContainer {
+        grid-template-columns: 1fr;
+    }
 }
