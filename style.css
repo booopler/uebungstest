@@ -1,6 +1,3 @@
-/* =========================================
-   1. BASE & TYPOGRAPHY
-   ========================================= */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -27,9 +24,6 @@ h2, h3 {
     font-weight: 700;
 }
 
-/* =========================================
-   2. MAIN LAYOUT
-   ========================================= */
 .container {
     background: #1e1e1e;
     padding: 40px 30px;
@@ -51,7 +45,6 @@ h2, h3 {
     z-index: 1;
 }
 
-/* Vertical divider for larger screens */
 .v-divider {
     width: 2px;
     height: 100px;
@@ -60,9 +53,6 @@ h2, h3 {
     flex-shrink: 0;
 }
 
-/* =========================================
-   3. SLOTS
-   ========================================= */
 .slot-container {
     flex: 1;
     min-width: 0;
@@ -92,7 +82,6 @@ h2, h3 {
     transition: color 0.3s ease, text-shadow 0.3s ease, opacity 0.3s ease;
 }
 
-/* Slot background and border decoupled for scaling effects */
 .slot::before {
     content: '';
     position: absolute;
@@ -104,45 +93,44 @@ h2, h3 {
     transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Hover state for an inactive, non-spinning slot */
 .slot:not(.spinning):not(.clickable):hover {
     cursor: pointer;
 }
+
 .slot:not(.spinning):not(.clickable):hover::before {
     background-color: #333333;
     transform: scale(1.05);
 }
 
-/* Spinning animation states */
 .slot.spinning {
     color: transparent;
     text-shadow: 0 0 9px rgba(185, 188, 174, 0.8);
     opacity: 0.5;
 }
+
 .slot.spinning::before {
     transform: scale(0.95);
 }
 
-/* Clickable (result ready) states */
 .slot.clickable {
     cursor: pointer;
 }
+
 .slot.clickable::before {
     background: #222622;
     box-shadow: 0 0 10px rgba(185, 188, 174, 0.2);
 }
+
 .slot.clickable:hover {
     color: #121212;
 }
+
 .slot.clickable:hover::before {
     background: #b9bcae;
     box-shadow: 0 0 15px rgba(185, 188, 174, 0.5);
     transform: scale(1.05);
 }
 
-/* =========================================
-   4. BUTTONS
-   ========================================= */
 #spinButton {
     position: relative;
     z-index: 2;
@@ -176,26 +164,26 @@ h2, h3 {
 #spinButton:hover {
     color: #b9bcae;
 }
+
 #spinButton:hover::before {
     background-color: #222622;
     box-shadow: 0 0 15px rgba(185, 188, 174, 0.4);
     transform: scale(1.05);
 }
 
-/* Disabled state */
 #spinButton:disabled {
     cursor: not-allowed;
     color: #666666;
     opacity: 0.5;
     filter: grayscale(1);
 }
+
 #spinButton:disabled::before {
     background-color: #333333;
     transform: none;
     box-shadow: none;
 }
 
-/* Slot refresh controls */
 .refresh-wrapper {
     max-height: 0;
     opacity: 0;
@@ -245,14 +233,12 @@ h2, h3 {
 .refresh-btn:hover {
     color: #121212;
 }
+
 .refresh-btn:hover::before {
     background-color: #b9bcae;
     transform: scale(1.05);
 }
 
-/* =========================================
-   5. ACCORDION & DIRECTORY
-   ========================================= */
 .collapsible-wrapper {
     background: #252525;
     border-radius: 16px;
@@ -322,10 +308,12 @@ h2, h3 {
 .link-column ul {
     list-style-type: none;
 }
+
 .link-column li {
     margin-bottom: 15px;
     font-size: 15px;
 }
+
 .link-column a {
     text-decoration: none;
     color: #b9bcae;
@@ -342,9 +330,6 @@ h2, h3 {
     box-shadow: 0 0 4px rgba(185, 188, 174, 0.8);
 }
 
-/* =========================================
-   6. RESPONSIVE DESIGN
-   ========================================= */
 @media (max-width: 750px) {
     #allLinksContainer {
         grid-template-columns: repeat(2, 1fr);
