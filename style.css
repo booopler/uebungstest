@@ -49,7 +49,7 @@ h2, h3 {
     width: 3px;
     height: 90px;
     background-color: #333333;
-    margin-top: 40px;
+    margin-top: 45px;
     flex-shrink: 0;
 }
 
@@ -299,7 +299,7 @@ h2, h3 {
 }
 
 .link-column h3 {
-    border-bottom: 2px solid #333333;
+    border-bottom: 3px solid #333333;
     padding-bottom: 5px;
     margin-bottom: 15px;
     font-size: 20px;
