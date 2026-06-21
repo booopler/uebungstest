@@ -285,7 +285,7 @@ h2, h3 {
 }
 
 .collapsible-wrapper.active .accordion-content {
-    max-height: 1600px;
+    max-height: 2000px;
     opacity: 1;
     visibility: visible;
     padding: 10px 24px 30px 24px;
