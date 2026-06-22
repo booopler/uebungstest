@@ -302,6 +302,7 @@ h3 {
 
 .link-column h3 {
     border-bottom: 3px solid #333333;
+    border-radius: 2px;
     padding-bottom: 5px;
     margin-bottom: 15px;
     font-size: 20px;
