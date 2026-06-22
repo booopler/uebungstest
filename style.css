@@ -52,6 +52,7 @@ h3 {
     background-color: #333333;
     margin-top: 45px;
     flex-shrink: 0;
+    border-radius: 2px;
 }
 
 .slot-container {
